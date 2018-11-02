@@ -8,31 +8,32 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button textBtn; // button text recognition
-    Button faceBtn; // button face detection
+    Button textBtn; // button call text recognition activity
+    Button qr_codeBtn; // Button call QR Code activity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_main );
 
-        textBtn = (Button)findViewById( R.id.btn_text );
-        faceBtn = (Button)findViewById( R.id.btn_face );
+        textBtn = findViewById( R.id.btn_text );
+        qr_codeBtn = findViewById( R.id.btn_qr_code );
 
         textBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent textIntent = new Intent(MainActivity.this,TextRecognition.class);
+                Intent textIntent = new Intent( MainActivity.this, TextRecognition.class );
                 startActivity( textIntent );
             }
         } );
 
-        faceBtn.setOnClickListener( new View.OnClickListener() {
+        qr_codeBtn.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent faceIntent = new Intent(MainActivity.this,FaceDetection.class);
-                startActivity( faceIntent );
+                Intent qr_codeIntent = new Intent( MainActivity.this,QRCode.class );
+                startActivity( qr_codeIntent );
             }
         } );
+
     }
 }

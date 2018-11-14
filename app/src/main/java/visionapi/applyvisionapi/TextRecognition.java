@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +33,7 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class TextRecognition extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -53,6 +57,8 @@ public class TextRecognition extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
+    // A TextToSpeech engine for speaking a String value.
+    private TextToSpeech tts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
@@ -76,6 +82,20 @@ public class TextRecognition extends AppCompatActivity {
 
         gestureDetector = new GestureDetector( this,new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector( this, new ScaleListener() );
+
+        // Set up the Text To Speech engine.
+        TextToSpeech.OnInitListener listener = new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(final int status) {
+                        if (status == TextToSpeech.SUCCESS) {
+                            Log.d("OnInitListener", "Text to speech engine started successfully.");
+                            tts.setLanguage(Locale.US);
+                        } else {
+                            Log.d("OnInitListener", "Error starting the text to speech engine.");
+                        }
+                    }
+                };
+        tts = new TextToSpeech(this.getApplicationContext(), listener);
 
     }
 
@@ -203,6 +223,7 @@ public class TextRecognition extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private boolean onTap(float rawX, float rawY) {
         OcrGraphic graphic = graphicOverlay.getGraphicAtLocation(rawX, rawY);
         TextBlock text = null;
@@ -210,7 +231,8 @@ public class TextRecognition extends AppCompatActivity {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
                 Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Translate text
+                // Speak the string.
+                tts.speak(text.getValue(), TextToSpeech.QUEUE_ADD, null, "DEFAULT");
 
             }
             else {
@@ -225,6 +247,7 @@ public class TextRecognition extends AppCompatActivity {
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);

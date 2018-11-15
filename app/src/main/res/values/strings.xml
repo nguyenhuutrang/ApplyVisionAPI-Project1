@@ -1,4 +1,22 @@
 <resources>
     <string name="app_name">ApplyVisionAPI</string>
     <string name="result_text_default">Please focus camera to QR Code :)</string>
+    <string name="title_activity_main">ApplyVisionAPI</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Nguyễn Hữu Tráng</string>
+    <string name="nav_header_subtitle">nguyenhuutrang.it@gmail.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+    <string name="help_user">1. Text Recognition \n
+        \t - Hướng camera sau về nơi cần nhận diện chữ \n
+        \t - Muốn dịch chữ ở ô nào thì nhấn vào ô đó \n
+        2. QR-Code\n
+        \t - Hướng camera sau về nơi có QRCode cần giải mã \n
+        \t - Điều chỉnh camera lấy nét. Điện thoại sẽ rung nhẹ khi nhận diện được \n</string>
+    <string name="about_us">
+    - Những người thực hiện: CHỈ MÌNH TÔI :v (Nguyễn Hữu Tráng) \n
+    - Sản phẩm này được thực hiện trong nội dung học phần Project1 \n
+    - Giảng viên hướng dẫn: thầy Nguyễn Đức Tiến \n
+    - Github: https://github.com/nguyenhuutrang/ApplyVisionAPI-Project1 \n </string>
 </resources>

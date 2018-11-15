@@ -6,10 +6,15 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -28,8 +34,14 @@ import com.google.android.gms.samples.vision.ocrreader.ui.camera.CameraSourcePre
 import com.google.android.gms.samples.vision.ocrreader.ui.camera.GraphicOverlay;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
 
 import java.io.IOException;
+import java.util.Locale;
 
 public class TextRecognition extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -45,6 +57,7 @@ public class TextRecognition extends AppCompatActivity {
     public static final String UseFlash = "UseFlash";
     public static final String TextBlockObject = "String";
 
+    private Button returnMainPage;
     private CameraSource cameraSource;
     private CameraSourcePreview preview;
     private GraphicOverlay<OcrGraphic> graphicOverlay;
@@ -53,17 +66,27 @@ public class TextRecognition extends AppCompatActivity {
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_text_recognition );
 
+        returnMainPage = (Button) findViewById( R.id.btn_text_to_main );
         preview = (CameraSourcePreview) findViewById( R.id.preview );
         graphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById( R.id.graphicOverlay );
 
         // Set good default for capturing text
         boolean autoFocus = true;
         boolean useFlash = false;
+
+        returnMainPage.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent( TextRecognition.this,MainActivity.class );
+                startActivity( intent );
+            }
+        } );
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
@@ -203,6 +226,7 @@ public class TextRecognition extends AppCompatActivity {
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private boolean onTap(float rawX, float rawY) {
         OcrGraphic graphic = graphicOverlay.getGraphicAtLocation(rawX, rawY);
         TextBlock text = null;
@@ -210,8 +234,21 @@ public class TextRecognition extends AppCompatActivity {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
                 Log.d(TAG, "text data is being spoken! " + text.getValue());
-                // Translate text
 
+                // convert text to qr-code
+                String txt = text.getValue();
+                MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
+                try {
+                    BitMatrix bitMatrix = multiFormatWriter.encode( txt,BarcodeFormat.QR_CODE,200,200 );
+                    BarcodeEncoder barcodeEncoder = new BarcodeEncoder();
+                    Bitmap bitmap = barcodeEncoder.createBitmap(bitMatrix);
+                    Intent intent = new Intent( TextRecognition.this,ShowQRcode.class );
+                    intent.putExtra( "qr_code",bitmap );
+                    intent.putExtra( "text",txt );
+                    startActivity( intent );
+                } catch (WriterException e) {
+                    e.printStackTrace();
+                }
             }
             else {
                 Log.d(TAG, "text data is null");
@@ -225,6 +262,7 @@ public class TextRecognition extends AppCompatActivity {
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {
 
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             return onTap(e.getRawX(), e.getRawY()) || super.onSingleTapConfirmed(e);

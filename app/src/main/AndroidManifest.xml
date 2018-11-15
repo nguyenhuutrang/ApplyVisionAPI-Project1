@@ -23,13 +23,13 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="ocr" />
 
         <activity android:name=".QRCode" />
-        <activity android:name=".TextRecognition"></activity>
+        <activity android:name=".TextRecognition" />
+        <activity android:name=".ShowQRcode"></activity>
     </application>
 
 </manifest>

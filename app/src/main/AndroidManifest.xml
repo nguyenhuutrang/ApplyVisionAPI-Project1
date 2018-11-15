@@ -15,6 +15,9 @@
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="ocr" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".MainActivity"
@@ -26,8 +29,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TextRecognition" />
         <activity android:name=".QRCode" />
+        <activity android:name=".TextRecognition" />
+        <activity android:name=".ShowQRcode"></activity>
+
     </application>
 
 </manifest>
